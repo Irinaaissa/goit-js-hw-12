@@ -28,14 +28,16 @@ function showLoadingIndicator() {
 function hideLoadingIndicator() {
   loader.style.display = 'none';
 }
-
+let page = 1;
+let query = null;
 searchForm.addEventListener('submit', async (event) => {
   event.preventDefault();
+  page = 1;
+   query = searchInput.value.trim;
 
-  const query = searchInput.value;
-
-  if (query.trim() === '') {
+  if (query === '') {
     iziToast.error({
+
       title: 'Error',
       message: 'Sorry, there are no images matching your search',
     });
@@ -44,43 +46,17 @@ searchForm.addEventListener('submit', async (event) => {
   }
 
   showLoadingIndicator();
-  let page = 1;
+  
 
   try {
-    const response = await axios.get(`${BASE_URL}?key=${API_KEY}&q=${query}&per_page=40`);
+  const response = await axios.get(`${BASE_URL}?key=${API_KEY}&page=${page}&q=${query}&per_page=40`);
     const { data: { hits } } = response;
 
     gallery.innerHTML = '';
-    page += 1;
+    
+    renderImages(hits);
 
-    const markup = hits.map(({ webformatURL, largeImageURL, tags, likes, views, comments, downloads }) => `
-      <li class="gallery-item">
-        <a class="gallery-link" href="${largeImageURL}" >
-          <img class="gallery-image" src="${webformatURL}" data-source="${largeImageURL}" alt="${tags}" />
-        </a>
-        <div class="card-info">
-        <div class="field">
-            <span class="label">Likes</span>
-            <span class="value">${likes}</span>    
-        </div>
-        
-        <div class="field">
-            <span class="label">Views</span>
-            <span class="value">${views}</span>   
-        </div>
-        <div class="field">
-            <span class="label">Comments</span>
-            <span class="value">${comments}</span>    
-        </div>
-        <div class="field">
-            <span class="label">Downloads</span>
-            <span class="value">${downloads}</span>    
-        </div>
-        </div>
-      </li>
-          `).join('');
-
-    gallery.insertAdjacentHTML('beforeend', markup);
+    
     lightbox.refresh();
   } catch (error) {
     iziToast.error({
@@ -91,34 +67,33 @@ searchForm.addEventListener('submit', async (event) => {
     hideLoadingIndicator();
     event.target.reset();
   }
+  
   });
 
-lightbox.refresh();
-let images = [];
-let currentPage = 1;
 
-searchForm.addEventListener('submit', function (event) {
-  event.preventDefault();
-  images = [];
-  currentPage = 1;
-  const query = document.getElementById('search-input').value;
-  performSearch(query, currentPage);
-});
 
 loadMoreButton.addEventListener('click', function () {
-  currentPage++;
-  const query = document.getElementById('search-input').value;
-  performSearch(query, currentPage);
+  page += 1;
+  try {
+    const response =  axios.get(`${BASE_URL}?key=${API_KEY}&page=${page}&q=${query}&per_page=40`);
+      const { data: { hits } } = response;
+      
+      
+      renderImages(hits);
+      
+      lightbox.refresh();
+    } catch (error) {
+      iziToast.error({
+        title: 'Error',
+        message: 'Sorry, there are no images matching your search',
+      });
+    } finally {
+      hideLoadingIndicator();
+      event.target.reset();
+    }
+  
 });
 
-function performSearch(query, page) {
-
-
-
-  setTimeout(function () {
-    addImagesToGallery([...Array(8)].map((_, i) => i + page * 10));
-  }, 1000);
-}
 
 function addImagesToGallery(imageIds) {
 
@@ -128,15 +103,38 @@ function addImagesToGallery(imageIds) {
     document.getElementById('load-more').style.display = 'none';
   }
 
-  imageIds.forEach(function (imageId) {
-    const imageElement = document.createElement('img');
-    imageElement.src = 'https://pixabay.com/api/' + API_KEY + '.jpg';
-    gallery.appendChild(imageElement);
-  });
 }
 
 
-
+function renderImages(hits) {
+  const markup = hits.map(({ webformatURL, largeImageURL, tags, likes, views, comments, downloads }) => `
+  <li class="gallery-item">
+    <a class="gallery-link" href="${largeImageURL}" >
+      <img class="gallery-image" src="${webformatURL}" data-source="${largeImageURL}" alt="${tags}" />
+    </a>
+    <div class="card-info">
+    <div class="field">
+        <span class="label">Likes</span>
+        <span class="value">${likes}</span>    
+    </div>
+    
+    <div class="field">
+        <span class="label">Views</span>
+        <span class="value">${views}</span>   
+    </div>
+    <div class="field">
+        <span class="label">Comments</span>
+        <span class="value">${comments}</span>    
+    </div>
+    <div class="field">
+        <span class="label">Downloads</span>
+        <span class="value">${downloads}</span>    
+    </div>
+    </div>
+  </li>
+      `).join('');
+      gallery.insertAdjacentHTML('beforeend', markup);
+}
 
 
 
