@@ -74,7 +74,7 @@ searchForm.addEventListener('submit', async (event) => {
 
 
 
-loadMoreButton.addEventListener('click',  async ,function () {
+loadMoreButton.addEventListener('click', async ,function () {
   page += 1;
   try {
     const response = await axios.get(`${BASE_URL}?key=${API_KEY}&page=${page}&q=${query}&per_page=40`);
