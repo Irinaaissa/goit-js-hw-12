@@ -87,8 +87,11 @@ loadMoreButton.addEventListener('click', function () {
      title: 'Error', 
         message: 'Sorry, there are no images matching your search',
 
+        
      });
+     
     } finally {
+      
       hideLoadingIndicator();
       
     }
