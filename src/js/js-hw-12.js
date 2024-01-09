@@ -29,6 +29,9 @@ function showLoadingIndicator() {
 function hideLoadingIndicator() {
   loader.style.display = 'none';
 }
+let limit = 500;
+const totalPages = Math.ceil(500/ limit);
+
 let page = 1;
 let query = null;
 searchForm.addEventListener('submit', async (event) => {
@@ -50,13 +53,10 @@ searchForm.addEventListener('submit', async (event) => {
   
 
   try {
-  const response = await axios.get(`${BASE_URL}?key=${API_KEY}&page=${page}&q=${query}&per_page=40`);
-    const { data: { hits } } = response;
-
+    sendRequest();
+    smoothScrollToNextGroup();
     gallery.innerHTML = '';
-    renderImages(hits);
 
-    lightbox.refresh();
     showLoadingMore();
     
   } catch (error) {
@@ -77,26 +77,24 @@ searchForm.addEventListener('submit', async (event) => {
 loadMoreButton.addEventListener('click', async function () {
   page += 1;
   try {
-    const response = await axios.get(`${BASE_URL}?key=${API_KEY}&page=${page}&q=${query}&per_page=40`);
-      const { data: { hits } } = response;
-      renderImages(hits); 
-      lightbox.refresh();
-    } catch (error) {
+    sendRequest();
+    smoothScrollToNextGroup();
+    } 
+    catch (error) {
       console.log(error);
        iziToast.error({
      title: 'Error', 
         message: 'Sorry, there are no images matching your search',
-
-
      });
-
-    } finally {
-
-
-      hideLoadingIndicator();
-      
     }
-  
+     finally {
+      hideLoadingIndicator();
+    }
+     
+    if  (page > totalPages) {
+      hideLoadingMore();
+      iziToast.info({ title: 'Info', message: "We're sorry, but you've reached the end of search results." });
+  }
 });
 
 
@@ -110,7 +108,20 @@ function hideLoadingMore() {
 
 
 
+async function sendRequest(){
+  const response = await axios.get(`${BASE_URL}?key=${API_KEY}&page=${page}&q=${query}&per_page=40`);
+  const { data: { hits } } = response;
+  renderImages(hits); 
+  lightbox.refresh();
+}
 
+
+
+
+function smoothScrollToNextGroup() {
+  const cardHeight = gallery.getBoundingClientRect().height;
+  window.scrollBy(0, cardHeight * 2);
+}
 
 
 
