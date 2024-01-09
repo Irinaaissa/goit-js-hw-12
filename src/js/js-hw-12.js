@@ -95,10 +95,11 @@ loadMoreButton.addEventListener('click', function () {
 
 
 function showLoadingMore() {
-  document.getElementById('load-more').style.display = 'flex';
+  loadMoreButton.style.display = 'flex';
+
 }
 function hideLoadingMore() {
-  document.getElementById('load-more').style.display = 'none';
+  loadMoreButton.style.display = 'none';
 }
 
 
