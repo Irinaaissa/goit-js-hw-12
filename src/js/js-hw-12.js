@@ -33,7 +33,7 @@ let query = null;
 searchForm.addEventListener('submit', async (event) => {
   event.preventDefault();
   page = 1;
-   query = searchInput.value.trim;
+   query = searchInput.value.trim();
 
   if (query === '') {
     iziToast.error({
@@ -53,16 +53,13 @@ searchForm.addEventListener('submit', async (event) => {
     const { data: { hits } } = response;
 
     gallery.innerHTML = '';
-    
-    
     renderImages(hits);
 
-    
     lightbox.refresh();
+    showLoadingMore();
     
-
-
   } catch (error) {
+
     iziToast.error({
       title: 'Error',
       message: 'Sorry, there are no images matching your search',
@@ -77,33 +74,15 @@ searchForm.addEventListener('submit', async (event) => {
 
 
 loadMoreButton.addEventListener('click', function () {
-
-  if (page > totalPages) {
-    return iziToast.error({
-      position: "topRight",
-      message: "We're sorry, there are no more posts to load"
-    });
-  }
-if (page > 1) {
-  document.getElementById('load-more').style.display = 'flex';
-}else {
-  document.getElementById('load-more').style.display = 'none';
-    }
   page += 1;
-
-  
   try {
     const response =  axios.get(`${BASE_URL}?key=${API_KEY}&page=${page}&q=${query}&per_page=40`);
       const { data: { hits } } = response;
-      
-      
-      renderImages(hits);
-      
+      renderImages(hits); 
       lightbox.refresh();
     } catch (error) {
       iziToast.error({
-        title: 'Error',
-        
+        title: 'Error', 
         message: 'Sorry, there are no images matching your search',
       });
     } finally {
@@ -114,15 +93,21 @@ if (page > 1) {
 });
 
 
-// function addImagesToGallery(imageIds) {
-// 
-  // if (imageIds.length > 0) {
-    // document.getElementById('load-more').style.display = 'flex';
-  // } else {
-    // document.getElementById('load-more').style.display = 'none';
-  // }
-// 
-// }
+function showLoadingMore() {
+  document.getElementById('load-more').style.display = 'flex';
+}
+function hideLoadingMore() {
+  document.getElementById('load-more').style.display = 'none';
+}
+
+
+
+
+
+
+
+
+
 
 
 function renderImages(hits) {
