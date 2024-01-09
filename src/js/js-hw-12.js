@@ -84,7 +84,11 @@ loadMoreButton.addEventListener('click', function () {
       message: "We're sorry, there are no more posts to load"
     });
   }
-
+if (page > 1) {
+  document.getElementById('load-more').style.display = 'flex';
+}else {
+  document.getElementById('load-more').style.display = 'none';
+    }
   page += 1;
 
   
@@ -104,21 +108,21 @@ loadMoreButton.addEventListener('click', function () {
       });
     } finally {
       hideLoadingIndicator();
-      event.target.reset();
+      
     }
   
 });
 
 
-function addImagesToGallery(imageIds) {
-
-  if (imageIds.length > 0) {
-    document.getElementById('load-more').style.display = 'flex';
-  } else {
-    document.getElementById('load-more').style.display = 'none';
-  }
-
-}
+// function addImagesToGallery(imageIds) {
+// 
+  // if (imageIds.length > 0) {
+    // document.getElementById('load-more').style.display = 'flex';
+  // } else {
+    // document.getElementById('load-more').style.display = 'none';
+  // }
+// 
+// }
 
 
 function renderImages(hits) {
