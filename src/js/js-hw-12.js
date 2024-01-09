@@ -83,10 +83,11 @@ loadMoreButton.addEventListener('click', function () {
       lightbox.refresh();
     } catch (error) {
       console.log(error);
-      // iziToast.error({
-        // title: 'Error', 
-        // message: 'Sorry, there are no images matching your search',
-      // });
+       iziToast.error({
+     title: 'Error', 
+        message: 'Sorry, there are no images matching your search',
+
+     });
     } finally {
       hideLoadingIndicator();
       
