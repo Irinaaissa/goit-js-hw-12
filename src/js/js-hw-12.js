@@ -82,6 +82,8 @@ loadMoreButton.addEventListener('click', function () {
       renderImages(hits); 
       lightbox.refresh();
     } catch (error) {
+      console.log(error);
+      
       iziToast.error({
         title: 'Error', 
         message: 'Sorry, there are no images matching your search',
