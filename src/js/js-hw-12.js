@@ -54,10 +54,14 @@ searchForm.addEventListener('submit', async (event) => {
 
     gallery.innerHTML = '';
     
+    
     renderImages(hits);
 
     
     lightbox.refresh();
+    
+
+
   } catch (error) {
     iziToast.error({
       title: 'Error',
@@ -73,7 +77,17 @@ searchForm.addEventListener('submit', async (event) => {
 
 
 loadMoreButton.addEventListener('click', function () {
+
+  if (page > totalPages) {
+    return iziToast.error({
+      position: "topRight",
+      message: "We're sorry, there are no more posts to load"
+    });
+  }
+
   page += 1;
+
+  
   try {
     const response =  axios.get(`${BASE_URL}?key=${API_KEY}&page=${page}&q=${query}&per_page=40`);
       const { data: { hits } } = response;
@@ -85,6 +99,7 @@ loadMoreButton.addEventListener('click', function () {
     } catch (error) {
       iziToast.error({
         title: 'Error',
+        
         message: 'Sorry, there are no images matching your search',
       });
     } finally {
@@ -135,6 +150,11 @@ function renderImages(hits) {
       `).join('');
       gallery.insertAdjacentHTML('beforeend', markup);
 }
+
+
+
+
+
 
 
 
