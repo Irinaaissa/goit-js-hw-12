@@ -41,13 +41,14 @@ async function sendRequest(){
   const response = await axios.get(`${BASE_URL}?key=${API_KEY}&page=${page}&q=${query}&per_page=40`);
   const { data: { hits } } = response;
   renderImages(hits); 
+  showLoadingMore();
   lightbox.refresh();
 }
 
 searchForm.addEventListener('submit', async (event) => {
   event.preventDefault();
   page = 1;
-   query = searchInput.value.trim();
+  query = searchInput.value.trim();
 
   if (query === '') {
     iziToast.error({
@@ -70,8 +71,6 @@ searchForm.addEventListener('submit', async (event) => {
     sendRequest();
     smoothScrollToNextGroup();
     gallery.innerHTML = '';
-
-    showLoadingMore();
     
   } catch (error) {
 
@@ -120,19 +119,6 @@ function showLoadingMore() {
 function hideLoadingMore() {
   loadMoreButton.style.display = 'none';
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 function smoothScrollToNextGroup() {
   const cardHeight = gallery.getBoundingClientRect().height;
