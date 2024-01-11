@@ -36,6 +36,14 @@ const totalPages = Math.ceil(limit/ 40);
 
 let page = 1;
 let query = null;
+
+async function sendRequest(){
+  const response = await axios.get(`${BASE_URL}?key=${API_KEY}&page=${page}&q=${query}&per_page=40`);
+  const { data: { hits } } = response;
+  renderImages(hits); 
+  lightbox.refresh();
+}
+
 searchForm.addEventListener('submit', async (event) => {
   event.preventDefault();
   page = 1;
@@ -50,6 +58,10 @@ searchForm.addEventListener('submit', async (event) => {
 
     return hideLoadingIndicator();
   }
+  if  (page > totalPages) {
+    hideLoadingMore();
+    iziToast.info({ title: 'Info', message: "We're sorry, but you've reached the end of search results." });
+    }
 
   showLoadingIndicator();
   
@@ -97,7 +109,7 @@ loadMoreButton.addEventListener('click', async function () {
     if  (page > totalPages) {
       hideLoadingMore();
       iziToast.info({ title: 'Info', message: "We're sorry, but you've reached the end of search results." });
-  }
+      }
 });
 
 
@@ -111,12 +123,12 @@ function hideLoadingMore() {
 
 
 
-async function sendRequest(){
-  const response = await axios.get(`${BASE_URL}?key=${API_KEY}&page=${page}&q=${query}&per_page=40`);
-  const { data: { hits } } = response;
-  renderImages(hits); 
-  lightbox.refresh();
-}
+
+
+
+
+
+
 
 
 
