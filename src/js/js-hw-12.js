@@ -11,9 +11,6 @@ const searchInput = document.getElementById('search-input');
 const gallery = document.getElementById('gallery');
 const loadMoreButton = document.getElementById('load-more');
 
-
-
-
 const BASE_URL = 'https://pixabay.com/api/';
 const API_KEY = '41471340-7b105b7a368edb6edd340273b';
 
@@ -32,16 +29,20 @@ function hideLoadingIndicator() {
   loader.style.display = 'none';
 }
 let limit = 500;
-const totalPages = Math.ceil(limit/ 40);
+const totalPages = Math.ceil(limit / 40);
 
 let page = 1;
 let query = null;
 
-async function sendRequest(){
+async function sendRequest() {
   const response = await axios.get(`${BASE_URL}?key=${API_KEY}&page=${page}&q=${query}&per_page=40`);
   const { data: { hits } } = response;
-  renderImages(hits); 
-  showLoadingMore();
+  renderImages(hits);
+  if (hits.length < 40) {
+    hideLoadingMore();
+  } else {
+    showLoadingMore();
+  }
   lightbox.refresh();
 }
 
@@ -52,28 +53,25 @@ searchForm.addEventListener('submit', async (event) => {
 
   if (query === '') {
     iziToast.error({
-
       title: 'Error',
       message: 'Sorry, there are no images matching your search',
     });
 
     return hideLoadingIndicator();
   }
-  if  (page > totalPages) {
+
+  if (page > totalPages) {
     hideLoadingMore();
     iziToast.info({ title: 'Info', message: "We're sorry, but you've reached the end of search results." });
-    }
+  }
 
   showLoadingIndicator();
-  
 
   try {
     sendRequest();
     smoothScrollToNextGroup();
     gallery.innerHTML = '';
-    
   } catch (error) {
-
     iziToast.error({
       title: 'Error',
       message: 'Sorry, there are no images matching your search',
@@ -82,36 +80,29 @@ searchForm.addEventListener('submit', async (event) => {
     hideLoadingIndicator();
     event.target.reset();
   }
-  
-  });
-
-
+});
 
 loadMoreButton.addEventListener('click', async function () {
   page += 1;
   try {
     sendRequest();
     smoothScrollToNextGroup();
-    } 
-    catch (error) {
-      console.log(error);
-       iziToast.error({
-     title: 'Error', 
-        message: 'Sorry, there are no images matching your search',
-     });
-    }
-     finally {
-      showLoadingMore();
-      hideLoadingIndicator();
-    }
-     
-    if  (page > totalPages) {
-      hideLoadingMore();
-      iziToast.info({ title: 'Info', message: "We're sorry, but you've reached the end of search results." });
-      }
+  } catch (error) {
+    console.log(error);
+    iziToast.error({
+      title: 'Error',
+      message: 'Sorry, there are no images matching your search',
+    });
+  } finally {
+    showLoadingMore();
+    hideLoadingIndicator();
+  }
+
+  if (page > totalPages) {
+    hideLoadingMore();
+    iziToast.info({ title: 'Info', message: "We're sorry, but you've reached the end of search results." });
+  }
 });
-
-
 function showLoadingMore() {
   loadMoreButton.style.display = 'flex';
 
