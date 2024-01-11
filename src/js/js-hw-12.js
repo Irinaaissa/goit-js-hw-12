@@ -12,6 +12,8 @@ const gallery = document.getElementById('gallery');
 const loadMoreButton = document.getElementById('load-more');
 
 
+
+
 const BASE_URL = 'https://pixabay.com/api/';
 const API_KEY = '41471340-7b105b7a368edb6edd340273b';
 
@@ -30,7 +32,7 @@ function hideLoadingIndicator() {
   loader.style.display = 'none';
 }
 let limit = 500;
-const totalPages = Math.ceil(500/ limit);
+const totalPages = Math.ceil(limit/ 40);
 
 let page = 1;
 let query = null;
@@ -88,6 +90,7 @@ loadMoreButton.addEventListener('click', async function () {
      });
     }
      finally {
+      showLoadingMore();
       hideLoadingIndicator();
     }
      
@@ -118,84 +121,8 @@ async function sendRequest(){
 
 
 
+
 function smoothScrollToNextGroup() {
   const cardHeight = gallery.getBoundingClientRect().height;
   window.scrollBy(0, cardHeight * 2);
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
