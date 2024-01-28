@@ -87,7 +87,10 @@ loadMoreButton.addEventListener('click', async function () {
   try {
     sendRequest();
     smoothScrollToNextGroup();
-  } catch (error) {
+  } catch (error) 
+  {
+
+    
     console.log(error);
     iziToast.error({
       title: 'Error',
